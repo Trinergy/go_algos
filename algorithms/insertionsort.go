@@ -4,12 +4,10 @@ import (
 	"fmt"
 )
 
-func pseudo(list []int) []int {
-	// take first element
-	// compare it with other elements in same list
-	// if it is bigger than element at [i], insert to right, else left
-
-}
+// WIP
+// take first element
+// compare it with other elements in same list
+// if it is bigger than element at [i], insert to right, else left
 
 // InsertionSort takes a list of integers and sorts it in ascending order
 func InsertionSort(list []int) []int {
