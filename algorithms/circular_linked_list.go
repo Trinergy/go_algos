@@ -4,6 +4,9 @@ import (
 	"fmt"
 )
 
+/* TODO: Make the List manage its items. Not have the items know of their parent
+* Rename for clarity
+ */
 type ArrayDLL struct {
 	length int
 }
