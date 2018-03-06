@@ -7,56 +7,129 @@ import (
 /* TODO: Make the List manage its items. Not have the items know of their parent
 * Rename for clarity
  */
-type ArrayDLL struct {
-	length int
+type DLList struct {
+	length    int
+	firstItem *DLLItem
+	lastItem  *DLLItem
 }
 
-type DLL struct {
+type DLLItem struct {
+	index    int
 	value    string
-	previous *DLL
-	next     *DLL
-	parent   *ArrayDLL
+	previous *DLLItem
+	next     *DLLItem
 }
 
-func (dll *DLL) add(value string) {
-	parentDLL := dll.parent
-	nextDLL := DLL{value: value, previous: dll, parent: parentDLL}
-	dll.next = &nextDLL
-
-	parentDLL.length++
-}
-
-func (dll *DLL) remove() {
-	previousDLL := dll.previous
-	nextDLL := dll.next
-
-	parentDLL := dll.parent
-	parentDLL.length--
-	parentDLL = nil
-
-	if previousDLL.previous == dll { // removing from head
-		previousDLL.previous = nil
+func (dll *DLList) add(value string) {
+	// New List
+	if dll.lastItem == nil {
+		firstItem := DLLItem{index: 0, value: value}
+		dll.firstItem = &firstItem
+		dll.lastItem = &firstItem
+	} else {
+		lastItem := dll.lastItem
+		newItem := DLLItem{index: lastItem.index + 1, value: value, previous: lastItem, next: dll.firstItem}
+		lastItem.next = &newItem
+		dll.lastItem = &newItem
 	}
 
-	previousDLL.next = nextDLL
+	dll.length++
+}
+
+func (dll *DLList) removeByIndex(index int) *DLLItem {
+	if index > dll.lastItem.index {
+		panic("Index out of range")
+	}
+
+	if index == 0 {
+		// handle removing first item
+		return dll.firstItem
+	}
+	if index == dll.lastItem.index {
+		removeItem := dll.lastItem
+		dll.lastItem = removeItem.previous
+		dll.removeItem(removeItem)
+		return removeItem
+	}
+
+	var i = 0
+	var removedItem *DLLItem
+	for i < dll.length {
+		nextItem := dll.firstItem.next
+		if nextItem.index == index {
+			removedItem = nextItem
+			dll.removeItem(nextItem)
+			dll.reindexFrom(nextItem)
+			dll.length--
+			break
+		}
+		i++
+	}
+
+	return removedItem
+}
+
+func (dll *DLList) removeItem(item *DLLItem) {
+	nextItem := item.next
+	previousItem := item.previous
+
+	nextItem.previous = previousItem
+	previousItem.next = nextItem
+	// fmt.Printf("\nthis is the nextItem's index: %d", nextItem.index)
+}
+
+func (dll *DLList) reindexFrom(startItem *DLLItem) {
+	// don't reindex if from start of list
+	if startItem.index == 0 {
+		return
+	}
+
+	var i = 0
+	var max = dll.length - startItem.index
+	// fmt.Printf("\nthis is the max: %d", max)
+	// fmt.Printf("\nthis is the startItem's index: %d", startItem.index)
+
+	startItem.index--
+	for i < max {
+		nextItem := startItem.next
+		nextItem.index--
+		i++
+	}
 }
 
 func main() {
-	arrayDLL := ArrayDLL{length: 1} // assumes to be initiated with a child (bad)
-	// currently child also assumes knowledge of parent
-	headDLL := DLL{value: "chicken", parent: &arrayDLL}
-	headDLL.add("beef")
-	nextDLL := headDLL.next
-	headDLL.previous = nextDLL
+	list := DLList{}
 
-	fmt.Printf("verify add: \nthis is first value: %q", headDLL.value)
-	fmt.Printf("\nthis is the second value: %q", nextDLL)
-	fmt.Printf("\nthis is the previous DLL: %q", headDLL.previous)
-	fmt.Printf("\nthis is the arrayDLL's length: %d", arrayDLL.length)
+	fmt.Println("\n=== ADD ===")
+	list.add("chicken")
+	fmt.Printf("\nthis is the last DLLItem: %q", list.lastItem.value)
+	fmt.Printf("\nthis is the last DLLItem's index: %d\n", list.lastItem.index)
+	fmt.Printf("\nthis is the list's length: %d\n", list.length)
 
-	nextDLL.remove()
+	list.add("beef")
+	fmt.Printf("\nthis is the last DLLItem: %q", list.lastItem.value)
+	fmt.Printf("\nthis is the last DLLItem's index: %d\n", list.lastItem.index)
+	fmt.Printf("\nthis is the list's length: %d\n", list.length)
 
-	fmt.Printf("\nverify remove:")
-	fmt.Printf("\n this is the DLL after removal: %q", headDLL)
-	fmt.Printf("\nthis is the arrayDLL's length: %d", arrayDLL.length)
+	list.removeByIndex(1)
+	fmt.Println("\n=== REMOVE BY INDEX ===")
+	fmt.Printf("\nthis is the last DLLItem: %q", list.lastItem.value)
+	fmt.Printf("\nthis is the last DLLItem's index: %d\n", list.lastItem.index)
+	fmt.Printf("\nthis is the list's length: %d\n", list.length)
+
+	fmt.Println("\n=== ADD BACK ===")
+	list.add("pork")
+	fmt.Printf("\nthis is the last DLLItem: %q", list.lastItem.value)
+	fmt.Printf("\nthis is the last DLLItem's index: %d\n", list.lastItem.index)
+	fmt.Printf("\nthis is the list's length: %d\n", list.length)
+
+	list.add("lamb")
+	fmt.Printf("\nthis is the last DLLItem: %q", list.lastItem.value)
+	fmt.Printf("\nthis is the last DLLItem's index: %d\n", list.lastItem.index)
+	fmt.Printf("\nthis is the list's length: %d\n", list.length)
+
+	list.removeByIndex(1)
+	fmt.Println("\n=== REMOVE BY INDEX ===")
+	fmt.Printf("\nthis is the last DLLItem: %q", list.lastItem.value)
+	fmt.Printf("\nthis is the list's length: %d\n", list.length)
 }
