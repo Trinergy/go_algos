@@ -36,6 +36,33 @@ func (dll *DLList) add(value string) {
 	dll.length++
 }
 
+func (dll *DLList) getByIndex(index int) *DLLItem {
+	if index < 0 {
+		panic("Index can not be negative")
+	}
+	if index > dll.length-1 {
+		panic("Index out of range")
+	}
+	if index == 0 {
+		return dll.firstItem
+	}
+	if index == dll.length-1 {
+		return dll.lastItem
+	}
+
+	var itemAtIndex *DLLItem
+	nextItem := dll.firstItem
+	for i := 1; i < dll.length; i++ {
+		nextItem = nextItem.next
+		if i == index {
+			itemAtIndex = nextItem
+			break
+		}
+	}
+
+	return itemAtIndex
+}
+
 func (dll *DLList) removeByIndex(index int) *DLLItem {
 	if index > dll.lastItem.index {
 		panic("Index out of range")
@@ -49,12 +76,12 @@ func (dll *DLList) removeByIndex(index int) *DLLItem {
 		removeItem := dll.lastItem
 		dll.lastItem = removeItem.previous
 		dll.removeItem(removeItem)
+		dll.length--
 		return removeItem
 	}
 
-	var i = 0
 	var removedItem *DLLItem
-	for i < dll.length {
+	for i := 0; i < dll.length; i++ {
 		nextItem := dll.firstItem.next
 		if nextItem.index == index {
 			removedItem = nextItem
@@ -63,7 +90,6 @@ func (dll *DLList) removeByIndex(index int) *DLLItem {
 			dll.length--
 			break
 		}
-		i++
 	}
 
 	return removedItem
@@ -112,7 +138,7 @@ func main() {
 	fmt.Printf("\nthis is the list's length: %d\n", list.length)
 
 	list.removeByIndex(1)
-	fmt.Println("\n=== REMOVE BY INDEX ===")
+	fmt.Println("\n=== REMOVE BY INDEX 1 ===")
 	fmt.Printf("\nthis is the last DLLItem: %q", list.lastItem.value)
 	fmt.Printf("\nthis is the last DLLItem's index: %d\n", list.lastItem.index)
 	fmt.Printf("\nthis is the list's length: %d\n", list.length)
@@ -122,6 +148,13 @@ func main() {
 	fmt.Printf("\nthis is the last DLLItem: %q", list.lastItem.value)
 	fmt.Printf("\nthis is the last DLLItem's index: %d\n", list.lastItem.index)
 	fmt.Printf("\nthis is the list's length: %d\n", list.length)
+
+	itemAtZero := list.getByIndex(0)
+	fmt.Printf("\nthis is the itemAtZero DLLItem: %q", itemAtZero.value)
+	itemAtOne := list.getByIndex(1)
+	fmt.Printf("\nthis is the itemAtOne DLLItem: %q", itemAtOne.value)
+	itemAtTwo := list.getByIndex(2)
+	fmt.Printf("\nthis is the itemAtTwo DLLItem: %q", itemAtTwo.value)
 
 	list.add("lamb")
 	fmt.Printf("\nthis is the last DLLItem: %q", list.lastItem.value)
