@@ -11,9 +11,9 @@ func MergeSort(list []int) []int {
 	}
 
 	// recursive case
-	pivot := (length / 2)
-	leftList := list[:pivot]
-	rightList := list[pivot:]
+	middle := (length / 2)
+	leftList := list[:middle]
+	rightList := list[middle:]
 	return merge(MergeSort(leftList), MergeSort(rightList))
 }
 
