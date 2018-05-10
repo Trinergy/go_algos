@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+)
 
 // QuickSort sorts the array's elements in ascending order from lowest to highest
 func QuickSort(list []int) []int {
@@ -11,8 +14,9 @@ func QuickSort(list []int) []int {
 	}
 
 	// recursive case
-	pivot := list[(length / 2)]
+	pivot := list[rand.Intn(length)]
 	var leftList, rightList []int
+
 	for _, v := range list {
 		if v <= pivot {
 			leftList = append(leftList, v)
@@ -21,11 +25,7 @@ func QuickSort(list []int) []int {
 		}
 	}
 
-	return merge(QuickSort(leftList), QuickSort(rightList))
-}
-
-func merge(list1, list2 []int) []int {
-	return append(list1, list2...)
+	return append(QuickSort(leftList), QuickSort(rightList)...)
 }
 
 func main() {
