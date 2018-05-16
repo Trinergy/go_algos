@@ -1,6 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Trinergy/gologger"
+)
+
+var (
+	log    = gologger.SetupLogFile("debug_log.txt")
+	logger = gologger.SetupLogger(log)
+)
 
 // Tree represents a collection of nodes
 type Tree interface {
@@ -36,6 +45,7 @@ func NewBinaryTree(list []int) BinaryTree {
 	count := 0
 	for i, v := range list[1:] {
 		if count == limit {
+			logger.Printf("%+v", queue[0])
 			queue = queue[1:]
 			count = 0
 		}
@@ -52,8 +62,10 @@ func NewBinaryTree(list []int) BinaryTree {
 }
 
 func main() {
-	sample := []int{8, 5, 45, 66, 78, 7587, 56}
+	defer log.Close()
+
+	sample := []int{8, 5, 45, 66, 78, 7587, 56, 20}
 	bt := NewBinaryTree(sample)
-	fmt.Println(bt.root.children[0].children)
+	fmt.Println(bt.root.children[1].children)
 	fmt.Println(bt.root)
 }
