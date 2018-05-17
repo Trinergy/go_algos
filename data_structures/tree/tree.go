@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/Trinergy/gologger"
 )
@@ -16,11 +17,13 @@ type Tree interface {
 	size() int
 	isRoot(n Node) bool
 	isLeafNode(n Node) bool
+	swap(one Node, two Node)
+	replace(old Node, new Node)
+	sort()
 }
 
 // BinaryTree is the collection of 2-set nodes
 type BinaryTree struct {
-	Tree
 	root *Node
 }
 
@@ -28,14 +31,41 @@ type BinaryTree struct {
 type Node struct {
 	id       int
 	value    int
-	parent   *Node
+	parent   *Node // TODO: No need for parent if purpose is only to know if it is a root. Resolved at tree level
 	children []Node
 }
 
-// NewBinaryTree constructs a binary tree given a list of integers
 func NewBinaryTree(list []int) BinaryTree {
-	if len(list) <= 0 {
+	if len(list) == 0 {
 		fmt.Printf("list can not be empty: %v", list)
+	}
+	nodeList := convertToNodes(list)
+	childIndex := 1
+	for _, node := range nodeList {
+		for i := 0; i < 2; i++ {
+			if childIndex == len(nodeList)-1 {
+				break
+			}
+			node.children[i] = nodeList[childIndex]
+			childIndex++
+		}
+	}
+	return BinaryTree{&nodeList[0]}
+}
+
+func convertToNodes(list []int) []Node {
+	nodeList := make([]Node, len(list))
+	for i, v := range list {
+		nodeList[i] = Node{id: i, value: v, children: make([]Node, 2)}
+	}
+	return nodeList
+}
+
+// NewBinaryTree2 constructs a binary tree given a list of integers
+func NewBinaryTree2(list []int) BinaryTree {
+	if len(list) == 0 {
+		fmt.Printf("list can not be empty: %v", list)
+		os.Exit(1)
 	}
 
 	root := Node{id: 0, value: list[0], children: make([]Node, 2)}
@@ -66,6 +96,6 @@ func main() {
 
 	sample := []int{8, 5, 45, 66, 78, 7587, 56, 20}
 	bt := NewBinaryTree(sample)
-	fmt.Println(bt.root.children[1].children)
-	fmt.Println(bt.root)
+	// fmt.Println(bt.root.children[1].children)
+	fmt.Println(bt.root.children)
 }
