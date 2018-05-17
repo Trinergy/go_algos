@@ -31,7 +31,6 @@ type BinaryTree struct {
 type Node struct {
 	id       int
 	value    int
-	parent   *Node // TODO: No need for parent if purpose is only to know if it is a root. Resolved at tree level
 	children []Node
 }
 
@@ -81,7 +80,7 @@ func NewBinaryTree2(list []int) BinaryTree {
 		}
 
 		parent := &queue[0]
-		node := Node{id: i, value: v, parent: parent, children: make([]Node, 2)}
+		node := Node{id: i, value: v, children: make([]Node, 2)}
 		parent.children[count] = node
 
 		queue = append(queue, node)
